@@ -7,6 +7,9 @@ Author: Marcelo Acevedo
 Plugin URI: https://github.com/mjacevedo28/fatherly-plugin
 */
 
+// Disable Wordpress native responsive image ability
+add_filter('max_srcset_image_width', create_function('', 'return 1;'));
+
 /**
  * Get all image tags and add srcset attribute
  * @param  $the_content 
