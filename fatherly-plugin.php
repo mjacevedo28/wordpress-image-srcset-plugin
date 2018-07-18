@@ -22,39 +22,55 @@ function add_srcset_attr($the_content){
     $document->loadHTML($the_content);
     $images = $document->getElementsByTagName('img');
     
-    // Array to hold resulting HTML tags with srcset
+    // Array to hold resulting HTML tags with srcset/sizes
     $srcset = array();
+    $sizes = array();
     
     // Get all available image sizes plus custom sizes   
-    $sizes = get_img_sizes();
+    $imageSizes = get_img_sizes();
     
     // Full size not found so manually adding it
-	$sizes[sizeof($sizes)] = array("width"=>'0', "height"=>'0', "size"=>'full');
+	$imageSizes[sizeof($imageSizes)] = array("width"=>'0', "height"=>'0', "size"=>'full');
 	
 	// Loop through all images, then through image sizes to add each size to each image's srcset
 	foreach ($images as $image) {   
 	    
 	    $imgID = url_to_id($image->getAttribute('src'));  
+	    $allWidths = array();
 	    
-	    foreach( $sizes as $available_size => $size ) {  
+	    foreach( $imageSizes as $available_size => $size ) {  
 				
 			$imageSrc = wp_get_attachment_image_src( $imgID, $size['size'] );
 			$imageMeta = wp_get_attachment_metadata( $imgID );
 			$imageUrl = $imageSrc[0];
-			
+	
 			// Full size not found in metadata so grabbing from imageSrc info
 			if ($size['size'] == "full"){
 				$width = $imageSrc[1];
 			} else {
 				$width = $imageMeta['sizes'][$size['size']]['width'];
 			}
-			
+
 			$srcset[ $available_size ] = $imageUrl . ' ' . $width . 'w';
+			
+			// Add all widths to a new array
+			array_push($allWidths, $width);
 		}
 		
-		// If srcset is not empty, add it to tag
+		// Go through array in reverse order to add sizes attribute;
+		$allWidths = array_reverse($allWidths);
+		for ($i = 0; $i < sizeof($allWidths); $i++){
+			if ($i < sizeof($allWidths)-1){
+				$sizes[$i] = "(min-width: " . $allWidths[$i+1] . "px) " . $allWidths[$i] . "px";
+			}
+			else {
+				$sizes[$i] = $allWidths[$i] . "px";
+			}
+		}
+	
 		if ($srcset){
 			$image->setAttribute('srcset', implode(', ', $srcset));
+			$image->setAttribute('sizes', implode(', ', $sizes));
 			$image->removeAttribute('src');
 		}
     }
