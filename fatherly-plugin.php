@@ -51,7 +51,12 @@ function add_srcset_attr($the_content){
 			
 			$srcset[ $available_size ] = $imageUrl . ' ' . $width . 'w';
 		}
+		
+		// If srcset is not empty, add it to tag
+		if ($srcset){
 			$image->setAttribute('srcset', implode(', ', $srcset));
+			$image->removeAttribute('src');
+		}
     }
 
 	return $document->saveHTML();   
