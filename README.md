@@ -12,7 +12,13 @@ Simply download and add to plugins folder, then activate in your Wordpress backe
 This will replace all the``<img>`` tags that lie within ``the_content`` with responsive image tags.
 
 I.e. if you have:
+**1.** Download the .zip file
 
+**2.** Unarchive the .zip file in the wp-content/plugins folder of your Wordpress directory
+
+**3.** Log in to the backend of your Wordpress site
+**4.** Navigate to the plugins page and find the "Fatherly Srcet Plugin"
+**5.** Click "Activate" and you're all set!
 
 
 ````html
